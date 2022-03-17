@@ -12,11 +12,11 @@ std::string FormFileName(const char* output_dir,
                          const char* name,
                          int instance_index,
                          const std::string& suffix) {
-
+/*
   std::string ss(name);
   return ss;
-/*
-  char buf[1024];
+*/
+  char buf[1024] = {0};
   std::string ss(buf);
   
   const size_t output_dir_size = strlen(output_dir);
@@ -29,16 +29,14 @@ std::string FormFileName(const char* output_dir,
   ss.append(name)
     .append("_")
     .append(std::to_string(instance_index))
-    .append("-")
     .append(suffix);
 
-  return ss; 
-*/
+  return ss;
 }  
 
 }  // namespace
 ApmDataDumper::ApmDataDumper(int instance_index)
-    : instance_index_(instance_index) {} 
+    : instance_index_(instance_index) {}
 
 ApmDataDumper::~ApmDataDumper() = default;
 

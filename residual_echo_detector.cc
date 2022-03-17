@@ -73,7 +73,7 @@ ResidualEchoDetector::~ResidualEchoDetector() {
 void ResidualEchoDetector::AnalyzeRenderAudio(
     std::vector<float> render_audio) {
   // Todo(lifan): Dump debug data
-  data_dumper_->DumpRaw("ed_render_16k_mono.pcm", render_audio.size(), &render_audio[0]); 
+  data_dumper_->DumpRaw("ed_render_16k_mono", render_audio.size(), &render_audio[0]);
   if (render_buffer_.Size() == 0) {
     frames_since_zero_buffer_size_ = 0;
   } else if (frames_since_zero_buffer_size_ >= kRenderBufferSize) {
@@ -83,14 +83,14 @@ void ResidualEchoDetector::AnalyzeRenderAudio(
   ++frames_since_zero_buffer_size_;
   float power = Power(render_audio);
   render_buffer_.Push(power);
-  data_dumper_->DumpRaw("ed_render_power_100hz_00.pcm", power); 
+  data_dumper_->DumpRaw("ed_render_power_100hz_00", power);
 }
 
 void ResidualEchoDetector::AnalyzeCaptureAudio(
     std::vector<float> capture_audio) {
   // Todo(lifan): Dump debug data
 
-  data_dumper_->DumpRaw("ed_capture_16k_mono.pcm", capture_audio.size(), &capture_audio[0]); 
+  data_dumper_->DumpRaw("ed_capture_16k_mono", capture_audio.size(), &capture_audio[0]);
 
   if (first_process_call_) {
     // On the first process call (so the start of a call), we must
@@ -112,22 +112,22 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   render_statistics_.Update(*buffered_render_power);
   // check next_insertion_index_ < kLookbackFrames
   render_power_[next_insertion_index_] = *buffered_render_power;
-  data_dumper_->DumpRaw("ed_render_power_100hz.pcm", render_power_[next_insertion_index_]); 
+  data_dumper_->DumpRaw("ed_render_power_100hz", render_power_[next_insertion_index_]);
   render_power_mean_[next_insertion_index_] = render_statistics_.mean();
-  data_dumper_->DumpRaw("ed_render_power_mean_100hz.pcm", render_power_mean_[next_insertion_index_]); 
+  data_dumper_->DumpRaw("ed_render_power_mean_100hz", render_power_mean_[next_insertion_index_]);
   render_power_std_dev_[next_insertion_index_] =
       render_statistics_.std_deviation();
-  data_dumper_->DumpRaw("ed_render_power_std_dev_100hz.pcm", render_power_std_dev_[next_insertion_index_]); 
+  data_dumper_->DumpRaw("ed_render_power_std_dev_100hz", render_power_std_dev_[next_insertion_index_]);
 
   // Get the next capture value, update capture statistics and
   // add the relevant values to the buffers.
   const float capture_power = Power(capture_audio);
-  data_dumper_->DumpRaw("ed_capture_power_100hz.pcm", capture_power); 
+  data_dumper_->DumpRaw("ed_capture_power_100hz", capture_power);
   capture_statistics_.Update(capture_power);
   const float capture_mean = capture_statistics_.mean();
-  data_dumper_->DumpRaw("ed_capture_power_mean_100hz.pcm", capture_mean); 
+  data_dumper_->DumpRaw("ed_capture_power_mean_100hz", capture_mean);
   const float capture_std_deviation = capture_statistics_.std_deviation();
-  data_dumper_->DumpRaw("ed_capture_power_std_dev_100hz.pcm", capture_std_deviation); 
+  data_dumper_->DumpRaw("ed_capture_power_std_dev_100hz", capture_std_deviation); 
 
   // Update the covariance values and determine the new echo likelihood.
   echo_likelihood_ = 0.f;
@@ -183,7 +183,7 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   int echo_percentage = static_cast<int>(echo_likelihood_ * 100);
   // RTC_HISTOGRAM_COUNTS("WebRTC.Audio.ResidualEchoDetector.EchoLikelihood", echo_percentage, 0, 100, 100/* number of bins */);
   echo_likelihood_histogram_.Add(echo_percentage);
-
+  data_dumper_->DumpRaw("echo_likelihood_100hz", echo_likelihood_);
 
   // Update the buffer of recent likelihood values.
   recent_likelihood_max_.Update(echo_likelihood_);

@@ -1,12 +1,16 @@
 #include "residual_echo_detector.h"
 
+#include <memory>
+
 #include "gtest/gtest.h"
+#include "logging/apm_data_dumper.h"
 
 namespace aqa {
 
-TEST(ResidualEchoDetectorTests, Echo) {
-//TEST(ResidualEchoDetectorTests, DISABLED_Echo) {
-  ResidualEchoDetector* echo_detector = new ResidualEchoDetector();
+//TEST(ResidualEchoDetectorTests, Echo) {
+TEST(ResidualEchoDetectorTests, DISABLED_Echo) {
+  ApmDataDumper::SetOutputDirectory("/tmp/pcm_tmp");
+  std::unique_ptr<ResidualEchoDetector> echo_detector = std::make_unique<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -35,7 +39,7 @@ TEST(ResidualEchoDetectorTests, Echo) {
 
 //TEST(ResidualEchoDetectorTests, NoEcho) {
 TEST(ResidualEchoDetectorTests, DISABLED_NoEcho) {
-  ResidualEchoDetector* echo_detector = new ResidualEchoDetector();
+  std::unique_ptr<ResidualEchoDetector> echo_detector = std::make_unique<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -56,9 +60,9 @@ TEST(ResidualEchoDetectorTests, DISABLED_NoEcho) {
   EXPECT_NEAR(0.1f, ed_metrics.echo_likelihood, 0.01f);
 }
 
-//TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
-TEST(ResidualEchoDetectorTests, DISABLED_EchoWithRenderClockDrift) {
-  ResidualEchoDetector* echo_detector = new ResidualEchoDetector();
+TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
+//TEST(ResidualEchoDetectorTests, DISABLED_EchoWithRenderClockDrift) {
+  std::unique_ptr<ResidualEchoDetector> echo_detector = std::make_unique<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
@@ -96,7 +100,7 @@ TEST(ResidualEchoDetectorTests, DISABLED_EchoWithRenderClockDrift) {
 
 //TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
 TEST(ResidualEchoDetectorTests, DISABLED_EchoWithCaptureClockDrift) {
-  ResidualEchoDetector* echo_detector = new ResidualEchoDetector();
+  std::unique_ptr<ResidualEchoDetector> echo_detector = std::make_unique<ResidualEchoDetector>();
   echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
